@@ -1,0 +1,35 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: theme("colors.cream");
+  color: #1f2433;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@layer components {
+  .concept-card {
+    @apply rounded-2xl bg-white p-6 shadow-card ring-1 ring-black/5;
+  }
+  .practice-card {
+    @apply rounded-2xl bg-white p-6 shadow-card ring-1 ring-black/5;
+  }
+}
