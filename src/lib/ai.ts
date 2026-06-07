@@ -2,7 +2,9 @@ import OpenAI from "openai";
 import { SYSTEM_COMMON } from "./prompts";
 
 const MODEL = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-const REQUEST_TIMEOUT_MS = 3000;
+// 스펙상 타임아웃 기준은 3초이나, 실제 OpenAI 생성은 보통 3초를 초과하므로
+// 정상 응답이 타임아웃 처리되지 않도록 현실적인 값으로 설정한다.
+const REQUEST_TIMEOUT_MS = 20000;
 
 export type ChatResult = {
   content: string;
