@@ -10,6 +10,7 @@ type MissionShellProps = {
   learnTitle: string;
   learnLead: string;
   concepts: ConceptItem[];
+  learnExample?: string;
   children: React.ReactNode;
 };
 
@@ -19,6 +20,7 @@ export function MissionShell({
   learnTitle,
   learnLead,
   concepts,
+  learnExample,
   children,
 }: MissionShellProps) {
   return (
@@ -31,6 +33,7 @@ export function MissionShell({
             title={learnTitle}
             lead={learnLead}
             concepts={concepts}
+            example={learnExample}
           />
           <section className="practice-card flex h-full flex-col">{children}</section>
         </div>

@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { hasApiKey, runChat } from "@/lib/ai";
+import { isMeaningfulPrompt } from "@/lib/validate";
 import { mockMission5 } from "@/lib/mock";
 import { buildMission5Prompt } from "@/lib/prompts";
-import { mission5, MAX_INPUT_LENGTH, MIN_INPUT_LENGTH } from "@/data/missions";
+import { MAX_INPUT_LENGTH, MIN_INPUT_LENGTH } from "@/data/missions";
 
 export const runtime = "nodejs";
 
@@ -31,16 +32,20 @@ export async function POST(req: Request) {
     );
   }
 
+  if (!isMeaningfulPrompt(userInput)) {
+    return NextResponse.json(
+      { error: "프롬프트 내용을 다시 확인해주세요. 의미 있는 문장으로 작성해주세요." },
+      { status: 422 }
+    );
+  }
+
   if (!hasApiKey()) {
     return NextResponse.json(mockMission5(userInput));
   }
 
   try {
     const { content } = await runChat({
-      missionPrompt: buildMission5Prompt({
-        productExamples: mission5.productExamples,
-        userInput,
-      }),
+      missionPrompt: buildMission5Prompt({ userInput }),
       temperature: 0.75,
     });
 

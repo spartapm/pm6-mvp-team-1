@@ -17,25 +17,20 @@ export function Mission5({
       learnTitle={m.learnTitle}
       learnLead={m.learnLead}
       concepts={m.concepts}
+      learnExample={m.learnExample}
       question={m.question}
       hint={m.hint}
       situationBlocks={[
         {
           label: "상황",
-          body: (
-            <>
-              <p>{m.situation}</p>
-              <p className="mt-2">
-                <span className="font-semibold text-navy">예시 상품:</span>{" "}
-                {m.productExamples}
-              </p>
-            </>
-          ),
+          body: <p>{m.situation}</p>,
         },
       ]}
       placeholder={m.placeholder}
       endpoint="/api/generate"
       showGeneratedCopy
+      runLabel="제출하기"
+      centerRunButton
       onPrev={onPrev}
       onNext={onNext}
     />

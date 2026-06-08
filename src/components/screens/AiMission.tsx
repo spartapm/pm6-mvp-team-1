@@ -16,6 +16,8 @@ type AiMissionProps = {
   learnTitle: string;
   learnLead: string;
   concepts: ConceptItem[];
+  /** 학습 자료 아래에 보여줄 좋은 프롬프트 예시 (선택) */
+  learnExample?: string;
   question: string;
   hint: string;
   /** 상황/원문 등 상단 설명 블록들 */
@@ -25,6 +27,10 @@ type AiMissionProps = {
   endpoint: string;
   /** 생성된 카피를 보여줄지 (미션5) */
   showGeneratedCopy?: boolean;
+  /** 실행 버튼 라벨 (기본: "AI 실행") */
+  runLabel?: string;
+  /** 실행 버튼을 정가운데 배치할지 (기본: 우측 정렬) */
+  centerRunButton?: boolean;
   onPrev: () => void;
   onNext: () => void;
 };
@@ -35,12 +41,15 @@ export function AiMission({
   learnTitle,
   learnLead,
   concepts,
+  learnExample,
   question,
   hint,
   situationBlocks,
   placeholder,
   endpoint,
   showGeneratedCopy = false,
+  runLabel = "AI 실행",
+  centerRunButton = false,
   onPrev,
   onNext,
 }: AiMissionProps) {
@@ -98,9 +107,12 @@ export function AiMission({
       learnTitle={learnTitle}
       learnLead={learnLead}
       concepts={concepts}
+      learnExample={learnExample}
     >
       <div className="mb-4 flex items-start justify-between gap-4">
-        <span className="text-xs font-semibold text-brand">{level} · 실습</span>
+        <span className="shrink-0 whitespace-nowrap text-xs font-semibold text-brand">
+          {level} · 실습
+        </span>
         <HintToggle hint={hint} />
       </div>
 
@@ -126,7 +138,7 @@ export function AiMission({
           rows={5}
           disabled={ai.loading}
           className={[
-            "w-full resize-none rounded-xl border bg-white p-4 text-sm leading-relaxed text-slate-700 outline-none transition placeholder:text-slate-400",
+            "w-full resize-none rounded-xl border bg-white p-4 text-[17px] leading-relaxed text-slate-700 outline-none transition placeholder:text-slate-400",
             tooLong
               ? "border-wrong focus:border-wrong"
               : "border-slate-200 focus:border-brand",
@@ -146,9 +158,12 @@ export function AiMission({
         type="button"
         disabled={!canRun}
         onClick={run}
-        className="mt-2 self-end rounded-xl bg-brand px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-ink disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+        className={[
+          "mt-2 rounded-xl bg-brand px-6 py-2.5 text-[17px] font-semibold text-white transition hover:bg-brand-ink disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400",
+          centerRunButton ? "self-center" : "self-end",
+        ].join(" ")}
       >
-        AI 실행
+        {runLabel}
       </button>
 
       <div className="mt-5">

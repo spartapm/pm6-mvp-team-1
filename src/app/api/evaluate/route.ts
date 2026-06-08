@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { hasApiKey, runChat } from "@/lib/ai";
+import { isMeaningfulPrompt } from "@/lib/validate";
 import { mockMission4 } from "@/lib/mock";
 import { buildMission4Prompt } from "@/lib/prompts";
 import { mission4, MAX_INPUT_LENGTH, MIN_INPUT_LENGTH } from "@/data/missions";
@@ -31,6 +32,13 @@ export async function POST(req: Request) {
     );
   }
 
+  if (!isMeaningfulPrompt(userInput)) {
+    return NextResponse.json(
+      { error: "프롬프트 내용을 다시 확인해주세요. 의미 있는 문장으로 작성해주세요." },
+      { status: 422 }
+    );
+  }
+
   // 데모 모드: API 키가 없으면 휴리스틱으로 평가
   if (!hasApiKey()) {
     return NextResponse.json(mockMission4(userInput));
@@ -43,7 +51,7 @@ export async function POST(req: Request) {
         problemDescription: mission4.situation,
         userInput,
       }),
-      temperature: 0.2,
+      temperature: 0.4,
     });
 
     const parsed = safeParse(content);

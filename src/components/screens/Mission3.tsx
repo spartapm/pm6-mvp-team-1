@@ -112,7 +112,7 @@ export function Mission3({
           type="button"
           disabled={order.length === 0}
           onClick={() => setSubmitted(true)}
-          className="mt-6 self-center rounded-xl bg-brand px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-ink disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+          className="mt-6 self-center rounded-xl bg-brand px-6 py-2.5 text-[17px] font-semibold text-white transition hover:bg-brand-ink disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
         >
           제출하기
         </button>
