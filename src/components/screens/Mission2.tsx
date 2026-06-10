@@ -44,9 +44,11 @@ export function Mission2({
   function chipClass(id: string, missing: boolean) {
     const isSelected = selected.has(id);
     if (submitted) {
-      if (missing && isSelected) return "border-correct bg-correct-soft text-correct";
-      if (missing && !isSelected) return "border-wrong bg-wrong-soft text-wrong";
-      if (!missing && isSelected) return "border-wrong bg-wrong-soft text-wrong";
+      if (result.perfect) {
+        if (missing && isSelected) return "border-correct bg-correct-soft text-correct";
+        return "border-slate-200 bg-white opacity-60";
+      }
+      if (isSelected) return "border-wrong bg-wrong-soft text-wrong";
       return "border-slate-200 bg-white opacity-60";
     }
     return isSelected
@@ -89,6 +91,7 @@ export function Mission2({
             key={c.id}
             type="button"
             disabled={submitted}
+            aria-pressed={selected.has(c.id)}
             onClick={() => toggle(c.id)}
             className={[
               "w-full rounded-xl border px-4 py-3 text-left transition disabled:cursor-default",
@@ -135,7 +138,7 @@ export function Mission2({
         </button>
       ) : null}
 
-      <NavButtons onPrev={onPrev} onNext={onNext} nextDisabled={!submitted} />
+      <NavButtons onPrev={onPrev} onNext={onNext} nextDisabled={!result.perfect} />
     </MissionShell>
   );
 }

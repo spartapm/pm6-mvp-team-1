@@ -12,13 +12,20 @@ export function Mission1({ onNext }: { onNext: () => void }) {
   const [submitted, setSubmitted] = useState(false);
   const answered = submitted && selected !== null;
   const selectedOption = m.options.find((o) => o.id === selected);
+  const isCorrect = answered && !!selectedOption?.correct;
   const isWrong = answered && !!selectedOption && !selectedOption.correct;
 
   function optionClass(optionId: string, correct: boolean) {
     if (!submitted) {
+      if (optionId === selected) {
+        return "border-brand bg-brand-soft text-brand-ink";
+      }
       return "border-slate-200 bg-white hover:bg-slate-50";
     }
-    if (correct) return "border-correct bg-correct-soft text-correct";
+    if (isCorrect) {
+      if (correct) return "border-correct bg-correct-soft text-correct";
+      return "border-slate-200 bg-white opacity-60";
+    }
     if (optionId === selected) return "border-wrong bg-wrong-soft text-wrong";
     return "border-slate-200 bg-white opacity-60";
   }
@@ -45,6 +52,7 @@ export function Mission1({ onNext }: { onNext: () => void }) {
             key={o.id}
             type="button"
             disabled={submitted}
+            aria-pressed={selected === o.id}
             onClick={() => setSelected(o.id)}
             className={[
               "w-full rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition",
@@ -92,7 +100,7 @@ export function Mission1({ onNext }: { onNext: () => void }) {
         </button>
       )}
 
-      <NavButtons prevDisabled onNext={onNext} nextDisabled={!submitted} />
+      <NavButtons prevDisabled onNext={onNext} nextDisabled={!isCorrect} />
     </MissionShell>
   );
 }

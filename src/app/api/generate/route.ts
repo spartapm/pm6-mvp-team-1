@@ -46,7 +46,7 @@ export async function POST(req: Request) {
   try {
     const { content } = await runChat({
       missionPrompt: buildMission5Prompt({ userInput }),
-      temperature: 0.75,
+      temperature: 0.3,
     });
 
     const parsed = safeParse(content);

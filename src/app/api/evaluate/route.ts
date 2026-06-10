@@ -51,7 +51,7 @@ export async function POST(req: Request) {
         problemDescription: mission4.situation,
         userInput,
       }),
-      temperature: 0.4,
+      temperature: 0.3,
     });
 
     const parsed = safeParse(content);

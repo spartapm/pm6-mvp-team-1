@@ -44,9 +44,11 @@ export function Mission3({
   function optionClass(id: string, correct: boolean) {
     const isSelected = selected.has(id);
     if (submitted) {
-      if (correct && isSelected) return "border-correct bg-correct-soft text-correct";
-      if (correct && !isSelected) return "border-wrong bg-wrong-soft text-wrong";
-      if (!correct && isSelected) return "border-wrong bg-wrong-soft text-wrong";
+      if (result.perfect) {
+        if (correct && isSelected) return "border-correct bg-correct-soft text-correct";
+        return "border-slate-200 bg-white opacity-60";
+      }
+      if (isSelected) return "border-wrong bg-wrong-soft text-wrong";
       return "border-slate-200 bg-white opacity-60";
     }
     return isSelected
@@ -88,6 +90,7 @@ export function Mission3({
               key={b.id}
               type="button"
               disabled={submitted}
+              aria-pressed={selected.has(b.id)}
               onClick={() => toggle(b.id)}
               className={[
                 "w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition disabled:cursor-default",
@@ -135,7 +138,7 @@ export function Mission3({
         </button>
       ) : null}
 
-      <NavButtons onPrev={onPrev} onNext={onNext} nextDisabled={!submitted} />
+      <NavButtons onPrev={onPrev} onNext={onNext} nextDisabled={!result.perfect} />
     </MissionShell>
   );
 }

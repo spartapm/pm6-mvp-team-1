@@ -190,13 +190,18 @@ export function AiMission({
               </div>
             )}
             <FeedbackBox
+              hideStatusText
               feedback={{ status: ai.status!, text: ai.feedback ?? "" }}
             />
           </div>
         )}
       </div>
 
-      <NavButtons onPrev={onPrev} onNext={onNext} nextDisabled={!completed} />
+      <NavButtons
+        onPrev={onPrev}
+        onNext={onNext}
+        nextDisabled={ai.status !== "correct"}
+      />
     </MissionShell>
   );
 }
