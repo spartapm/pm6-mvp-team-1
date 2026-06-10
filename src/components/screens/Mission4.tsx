@@ -17,6 +17,7 @@ export function Mission4({
       learnTitle={m.learnTitle}
       learnLead={m.learnLead}
       concepts={m.concepts}
+      learnExample={m.learnExample}
       question={m.question}
       hint={m.hint}
       situationBlocks={[
@@ -35,6 +36,8 @@ export function Mission4({
       ]}
       placeholder={m.placeholder}
       endpoint="/api/evaluate"
+      runLabel="제출하기"
+      centerRunButton
       onPrev={onPrev}
       onNext={onNext}
     />

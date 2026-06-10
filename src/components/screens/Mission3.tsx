@@ -14,7 +14,7 @@ export function Mission3({
   onPrev: () => void;
   onNext: () => void;
 }) {
-  const [order, setOrder] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [submitted, setSubmitted] = useState(false);
 
   const totalCorrect = useMemo(
@@ -22,25 +22,37 @@ export function Mission3({
     []
   );
 
-  function add(id: string) {
-    if (submitted || order.includes(id)) return;
-    setOrder((prev) => [...prev, id]);
-  }
-  function remove(id: string) {
+  function toggle(id: string) {
     if (submitted) return;
-    setOrder((prev) => prev.filter((x) => x !== id));
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
   }
 
   const result = useMemo(() => {
-    const picked = m.blocks.filter((b) => order.includes(b.id));
-    const correctPicked = picked.filter((b) => b.correct).length;
-    const wrongPicked = picked.filter((b) => !b.correct).length;
-    const missed = totalCorrect - correctPicked;
-    const perfect = correctPicked === totalCorrect && wrongPicked === 0;
-    return { correctPicked, wrongPicked, missed, perfect };
-  }, [order, totalCorrect]);
+    const correctlyPicked = m.blocks.filter(
+      (b) => b.correct && selected.has(b.id)
+    ).length;
+    const missed = totalCorrect - correctlyPicked;
+    const falsePositive = m.blocks.some((b) => !b.correct && selected.has(b.id));
+    const perfect = correctlyPicked === totalCorrect && !falsePositive;
+    return { correctlyPicked, missed, falsePositive, perfect };
+  }, [selected, totalCorrect]);
 
-  const blockById = (id: string) => m.blocks.find((b) => b.id === id)!;
+  function optionClass(id: string, correct: boolean) {
+    const isSelected = selected.has(id);
+    if (submitted) {
+      if (correct && isSelected) return "border-correct bg-correct-soft text-correct";
+      if (correct && !isSelected) return "border-wrong bg-wrong-soft text-wrong";
+      if (!correct && isSelected) return "border-wrong bg-wrong-soft text-wrong";
+      return "border-slate-200 bg-white opacity-60";
+    }
+    return isSelected
+      ? "border-brand bg-brand-soft text-brand-ink"
+      : "border-slate-200 bg-white hover:bg-slate-50";
+  }
 
   return (
     <MissionShell
@@ -49,6 +61,7 @@ export function Mission3({
       learnTitle={m.learnTitle}
       learnLead={m.learnLead}
       concepts={m.concepts}
+      learnExample={m.learnExample}
     >
       <div className="mb-4 flex items-start justify-between gap-4">
         <span className="text-xs font-semibold text-brand">{m.level} · 실습</span>
@@ -57,48 +70,28 @@ export function Mission3({
 
       <h3 className="text-lg font-bold text-navy">{m.question}</h3>
 
-      <p className="mt-5 text-sm font-semibold text-navy">조립 공간</p>
-      <div className="mt-2 min-h-[88px] rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-3">
-        {order.length === 0 ? (
-          <p className="flex h-full items-center justify-center py-5 text-sm text-slate-400">
-            {m.placeholder}
-          </p>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {order.map((id, i) => {
-              const b = blockById(id);
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => remove(id)}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-white transition hover:bg-brand-ink disabled:cursor-default"
-                >
-                  <span className="text-white/70">{i + 1}</span>
-                  {b.label}
-                </button>
-              );
-            })}
-          </div>
-        )}
+      <div className="mt-4 rounded-xl bg-slate-50 p-4 text-sm leading-relaxed text-brand-ink">
+        <p className="mb-1 font-bold text-navy">프롬프트</p>
+        <p className="whitespace-pre-line italic">{m.prompt}</p>
       </div>
 
-      <p className="mt-5 text-sm font-semibold text-navy">블록 풀</p>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-3 rounded-xl bg-slate-50 p-4 text-sm leading-relaxed text-slate-600">
+        <p className="mb-1 font-bold text-navy">생성 결과</p>
+        <p className="whitespace-pre-line">{m.generatedCopy}</p>
+      </div>
+
+      <p className="mt-5 text-sm font-semibold text-navy">{m.question}</p>
+      <div className="mt-2 space-y-2.5">
         {m.blocks.map((b) => {
-          const used = order.includes(b.id);
           return (
             <button
               key={b.id}
               type="button"
-              disabled={submitted || used}
-              onClick={() => add(b.id)}
+              disabled={submitted}
+              onClick={() => toggle(b.id)}
               className={[
-                "rounded-lg border px-3 py-2 text-xs font-medium transition",
-                used
-                  ? "border-slate-200 bg-slate-100 text-slate-300"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-brand hover:bg-brand-soft",
+                "w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition disabled:cursor-default",
+                optionClass(b.id, b.correct),
               ].join(" ")}
             >
               {b.label}
@@ -110,28 +103,37 @@ export function Mission3({
       {!submitted ? (
         <button
           type="button"
-          disabled={order.length === 0}
+          disabled={selected.size === 0}
           onClick={() => setSubmitted(true)}
-          className="mt-6 self-center rounded-xl bg-brand px-6 py-2.5 text-[17px] font-semibold text-white transition hover:bg-brand-ink disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+          className="mt-5 self-center rounded-xl bg-brand px-6 py-2.5 text-[17px] font-semibold text-white transition hover:bg-brand-ink disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
         >
           제출하기
         </button>
       ) : (
-        <div className="mt-6">
+        <div className="mt-5">
           <FeedbackBox
             feedback={{
               status: result.perfect ? "correct" : "wrong",
               text: result.perfect
                 ? `${totalCorrect}/${totalCorrect}개 정답. 완벽하게 조립했습니다!`
-                : `${result.correctPicked}/${totalCorrect}개 정답, ${result.missed}개를 빠뜨렸습니다.${
-                    result.wrongPicked > 0
-                      ? ` 불필요한 블록 ${result.wrongPicked}개가 포함됐어요.`
-                      : ""
-                  }`,
+                : `${result.correctlyPicked}/${totalCorrect}개 정답, ${result.missed}개를 빠뜨렸습니다.`,
             }}
           />
         </div>
       )}
+
+      {submitted && !result.perfect ? (
+        <button
+          type="button"
+          onClick={() => {
+            setSelected(new Set());
+            setSubmitted(false);
+          }}
+          className="mt-4 self-center rounded-xl border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          재시도
+        </button>
+      ) : null}
 
       <NavButtons onPrev={onPrev} onNext={onNext} nextDisabled={!submitted} />
     </MissionShell>

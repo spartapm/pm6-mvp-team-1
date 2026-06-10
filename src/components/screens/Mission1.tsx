@@ -9,11 +9,13 @@ import { mission1 as m } from "@/data/missions";
 
 export function Mission1({ onNext }: { onNext: () => void }) {
   const [selected, setSelected] = useState<string | null>(null);
-  const answered = selected !== null;
+  const [submitted, setSubmitted] = useState(false);
+  const answered = submitted && selected !== null;
   const selectedOption = m.options.find((o) => o.id === selected);
+  const isWrong = answered && !!selectedOption && !selectedOption.correct;
 
   function optionClass(optionId: string, correct: boolean) {
-    if (!answered) {
+    if (!submitted) {
       return "border-slate-200 bg-white hover:bg-slate-50";
     }
     if (correct) return "border-correct bg-correct-soft text-correct";
@@ -42,7 +44,7 @@ export function Mission1({ onNext }: { onNext: () => void }) {
           <button
             key={o.id}
             type="button"
-            disabled={answered}
+            disabled={submitted}
             onClick={() => setSelected(o.id)}
             className={[
               "w-full rounded-xl border px-4 py-3.5 text-left text-sm font-medium transition",
@@ -55,6 +57,17 @@ export function Mission1({ onNext }: { onNext: () => void }) {
         ))}
       </div>
 
+      {!submitted ? (
+        <button
+          type="button"
+          disabled={!selected}
+          onClick={() => setSubmitted(true)}
+          className="mt-5 self-center rounded-xl bg-brand px-6 py-2.5 text-[17px] font-semibold text-white transition hover:bg-brand-ink disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+        >
+          제출하기
+        </button>
+      ) : null}
+
       {answered && selectedOption && (
         <div className="mt-5">
           <FeedbackBox
@@ -66,7 +79,20 @@ export function Mission1({ onNext }: { onNext: () => void }) {
         </div>
       )}
 
-      <NavButtons prevDisabled onNext={onNext} nextDisabled={!answered} />
+      {isWrong && (
+        <button
+          type="button"
+          onClick={() => {
+            setSelected(null);
+            setSubmitted(false);
+          }}
+          className="mx-auto mt-5 block rounded-xl border border-slate-300 bg-white px-6 py-2.5 text-[17px] font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          재시도
+        </button>
+      )}
+
+      <NavButtons prevDisabled onNext={onNext} nextDisabled={!submitted} />
     </MissionShell>
   );
 }

@@ -39,7 +39,7 @@ export type Mission4Result = {
 const M4_CORRECT =
   "수정 지시 3가지가 모두 잘 담겨 있어요.\n무엇을 바꿀지, 어떻게 바꿀지, 무엇을 유지할지가 명확합니다.";
 const M4_WRONG =
-  "수정 지시의 3가지를 모두 담아 다시 써보세요.\n→ 무엇이 문제인지: 딱딱한 표현·전문 용어\n→ 어떻게 바꿀지: 일상어, 감정 중심 표현\n→ 무엇을 유지할지: 전체 톤, 핵심 메시지";
+  "수정 지시의 3가지를 모두 담아 다시 써보세요.\n→ 무엇이 문제인지: [문제 요소 예시 키워드]\n→ 어떻게 바꿀지: [방향 예시 키워드]\n→ 무엇을 유지할지: [유지 요소 예시 키워드]";
 
 export function mockMission4(userInput: string): Mission4Result {
   if (!isRelated(userInput)) {

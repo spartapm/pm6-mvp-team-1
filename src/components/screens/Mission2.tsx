@@ -61,6 +61,7 @@ export function Mission2({
       learnTitle={m.learnTitle}
       learnLead={m.learnLead}
       concepts={m.concepts}
+      learnExample={m.learnExample}
     >
       <div className="mb-4 flex items-start justify-between gap-4">
         <span className="text-xs font-semibold text-brand">{m.level} · 실습</span>
@@ -95,7 +96,6 @@ export function Mission2({
             ].join(" ")}
           >
             <span className="text-sm font-semibold">{c.label}</span>
-            <span className="mt-0.5 block text-xs text-slate-500">{c.desc}</span>
           </button>
         ))}
       </div>
@@ -116,14 +116,24 @@ export function Mission2({
               status: result.perfect ? "correct" : "wrong",
               text: result.perfect
                 ? `${totalMissing}/${totalMissing}개 정답. 빠진 재료를 모두 정확히 골랐습니다.`
-                : `${result.correctlyPicked}/${totalMissing}개 정답, ${result.missed}개를 빠뜨렸습니다.${
-                    result.falsePositive
-                      ? " 이미 포함된 재료는 빼고 다시 살펴보세요." : ""
-                  }`,
+                : `${result.correctlyPicked}/${totalMissing}개 정답, ${result.missed}개를 빠뜨렸습니다.`,
             }}
           />
         </div>
       )}
+
+      {submitted && !result.perfect ? (
+        <button
+          type="button"
+          onClick={() => {
+            setSelected(new Set());
+            setSubmitted(false);
+          }}
+          className="mt-4 self-center rounded-xl border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          재시도
+        </button>
+      ) : null}
 
       <NavButtons onPrev={onPrev} onNext={onNext} nextDisabled={!submitted} />
     </MissionShell>

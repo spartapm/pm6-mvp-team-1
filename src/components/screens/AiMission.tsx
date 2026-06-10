@@ -27,9 +27,9 @@ type AiMissionProps = {
   endpoint: string;
   /** 생성된 카피를 보여줄지 (미션5) */
   showGeneratedCopy?: boolean;
-  /** 실행 버튼 라벨 (기본: "AI 실행") */
+  /** 실행 버튼 라벨 (기본: "제출하기") */
   runLabel?: string;
-  /** 실행 버튼을 정가운데 배치할지 (기본: 우측 정렬) */
+  /** 실행 버튼을 정가운데 배치할지 (기본: true) */
   centerRunButton?: boolean;
   onPrev: () => void;
   onNext: () => void;
@@ -48,8 +48,8 @@ export function AiMission({
   placeholder,
   endpoint,
   showGeneratedCopy = false,
-  runLabel = "AI 실행",
-  centerRunButton = false,
+  runLabel = "제출하기",
+  centerRunButton = true,
   onPrev,
   onNext,
 }: AiMissionProps) {
